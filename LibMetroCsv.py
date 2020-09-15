@@ -15,8 +15,8 @@ def listeMetroCsv(Fname):
     """
     F = open(Fname)
     L1, L2, L3 = [], [], []
-    for line in F.readlines()[1:]:
-        ptdata = line.split(sep=';')
+    for l in F.readlines()[1:]: # on exclue la première ligne
+        ptdata = l.split(sep=';')
         i=0
         for ptd in ptdata :
             ptdata[i] = str(ptd)
@@ -31,104 +31,15 @@ def listeMetroCsv(Fname):
     
     F.close()
     return L3
-
-def dict_temps_csv(Fname):
-    """
-    Fonction qui lit un fichier .csv et qui en extrait les informations liées au temps par ligne sous la forme d'un dictionnaire avec :
-    clef : temps de battement, temps d'attente, freq de passage min, freq de passage max
-    
-    """
-    registre=dict()
-    temp=dict()
-    F= open(Fname)
-    L0 = []
-    for line in F.readlines()[1:]:
-        ptdata = line.split(sep=';')
-        i=0
-        for ptd in ptdata :
-            ptdata[i] = str(ptd)
-            i+=1
-        L0.append(ptdata)
-    l1,l2,l3,l3b,l4,l5,l6,l7,l7b,l8,l9,l10,l11,l12,l13,l14=[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
-    
-    for var in L0:
-        if var[0]=="M1":
-            for i in range(1,5):
-                l1.append(var[i])
-        if var[0]=="M2":
-            for i in range(1,5):
-                l2.append(var[i])
-        if var[0]=="M3":
-            for i in range(1,5):
-                l3.append(var[i])
-        if var[0]=="M3b":
-            for i in range(1,5):
-                l3b.append(var[i])
-        if var[0]=="M4":
-            for i in range(1,5):
-                l4.append(var[i])
-        if var[0]=="M5":
-            for i in range(1,5):
-                l5.append(var[i])
-        if var[0]=="M6":
-            for i in range(1,5):
-                l6.append(var[i])
-        if var[0]=="M7":
-            for i in range(1,5):
-                l7.append(var[i])
-        if var[0]=="M7b":
-            for i in range(1,5):
-                l7b.append(var[i])
-        if var[0]=="M8":
-            for i in range(1,5):
-                l8.append(var[i])
-        if var[0]=="M9":
-            for i in range(1,5):
-                l9.append(var[i])
-        if var[0]=="M10":
-            for i in range(1,5):
-                l10.append(var[i])
-        if var[0]=="M11":
-            for i in range(1,5):
-                l11.append(var[i])
-        if var[0]=="M12":
-            for i in range(1,5):
-                l12.append(var[i])
-        if var[0]=="M13":
-            for i in range(1,5):
-                l13.append(var[i])
-        if var[0]=="M14":
-            for i in range(1,5):
-                l14.append(var[i])
-    temp["M1"]=l1
-    temp["M2"]=l2
-    temp["M3"]=l3
-    temp["M3b"]=l3b
-    temp["M4"]=l4
-    temp["M5"]=l5
-    temp["M6"]=l6
-    temp["M7"]=l7
-    temp["M7b"]=l7b
-    temp["M8"]=l8
-    temp["M9"]=l9
-    temp["M10"]=l10
-    temp["M11"]=l11
-    temp["M12"]=l12
-    temp["M13"]=l13
-    temp["M14"]=l14
-    
-    registre = OrderedDict(sorted(temp.items(), key=lambda t: t[0]))
-
-    return registre 
     
 def listeMetroCsvStation(Fname):
     """
     Fonction qui lit un fichier .csv et qui en extrait le nom des stations.
     """
     F = open(Fname)
-    L1, L2= [], []
-    for line in F.readlines()[1:]:
-        ptdata = line.split(sep=';')
+    L1, L2, L3 = [], [], []
+    for l in F.readlines()[1:]: # on exclue la première ligne
+        ptdata = l.split(sep=';')
         i=0
         for ptd in ptdata :
             ptdata[i] = str(ptd)
@@ -141,7 +52,7 @@ def listeMetroCsvStation(Fname):
     F.close()
     return L2
 
-def dictMetroCsv(line):
+def dictMetroCsv(l):
     """
     Fonction qui retourne un dictionnaire des stations triées par ligne.
     """
@@ -149,7 +60,7 @@ def dictMetroCsv(line):
     temp=dict()
     l1,l2,l3,l3b,l4,l5,l6,l7,l7b,l8,l9,l10,l11,l12,l13,l14=[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
     
-    for var in line:
+    for var in l:
         if var[0]=="M1":
             l1.append(var[1])
         if var[0]=="M2":
@@ -182,7 +93,6 @@ def dictMetroCsv(line):
             l13.append(var[1])
         if var[0]=="M14":
             l14.append(var[1])
-    
     temp["M1"]=l1
     temp["M2"]=l2
     temp["M3"]=l3
@@ -204,10 +114,7 @@ def dictMetroCsv(line):
 
     return registre      
 
-############ Testes des fonctions  ############
-
 #print(listeMetroCsv("liste stations.csv"))
 #print(listeMetroCsvStation("liste stations exceptions-fourche2.csv"))        
 #print(os.listdir(path))
-#print(dictMetroCsv(listeMetroCsv("liste stations.csv"))["M1"][0])
-#print(dict_temps_csv("info_temps.csv"))
+#print(dictMetroCsv(listeMetroCsv("liste stations.csv")))

@@ -9,7 +9,7 @@ from tkinter import *
 
 programme = Tk()
 programme.title("Itinéraires RATP")
-programme.geometry("1000x300")
+programme.geometry("1200x400")
 
 ############################
 
@@ -21,7 +21,7 @@ for varLd in dictMetroCsv(L):
     
 ############################
 
-filename = PhotoImage(file = ".\\logo-ratp.png")
+filename = PhotoImage(file="./logo-ratp.png")
 Label(programme, image=filename).place(x=0, y=0, relwidth=1, relheight=1)
 
 ############################
@@ -30,7 +30,7 @@ varCalc = StringVar(programme)
 varCalc.set("")
 
 def Calc(*arg):
-    varCalc.set(itineraire(varSd.get(),varLd.get(),varSa.get(),varLa.get(),timeH.get()+timeM.get()*0.01666))
+    varCalc.set(itineraire(varSd.get(),varLd.get(),varSa.get(),varLa.get()))
 
 ############################
 
@@ -41,11 +41,11 @@ varSa = StringVar(programme)
 varSa.set("Choississez la station")
 
 def AffichageDepart(*arg):
-   w1 = OptionMenu(programme, varSd, *dictMetroCsv(L)[varLd.get()], command=Calc)
+   w1 = OptionMenu(programme, varSd, *dictMetroCsv(L)[varLd.get()])
    w1.grid(column=1, row=3)
 
 def AffichageArrive(*arg):
-   w3 = OptionMenu(programme, varSa, *dictMetroCsv(L)[varLa.get()], command=Calc)
+   w3 = OptionMenu(programme, varSa, *dictMetroCsv(L)[varLa.get()])
    w3.grid(column=1, row=5)
         
 ############################ 
@@ -64,30 +64,10 @@ w2.grid(column=1, row=4)
 
 ############################
 
-heures, minutes = [], []
-
-for n in range(0,60):
-    if n<24:
-        heures.append(n)
-    if n%5==0:
-        minutes.append(n)
-
-############################
-
-timeH = IntVar(programme)
-timeM = IntVar(programme)
-
-
-w4 = OptionMenu(programme, timeH, *heures, command=Calc)
-w4.grid(column=3, row=2)
-
-w5 = OptionMenu(programme, timeM, *minutes, command=Calc)
-w5.grid(column=4, row=2)
-
-############################
-
 Label(programme, text="Itinéraire du réseau de métro RATP").grid(column=1, row=1)
-Label(programme, text="\t|\tHeure de départ").grid(column=3, row=1)
-Label(programme, textvariable=varCalc).grid(column=5, row=1)
+Label(programme, textvariable=varCalc).grid(column=3, row=2)
+
+calcButton=Button(programme, text="Calculer", command=Calc)
+calcButton.grid(column=3, row=1)
             
 programme.mainloop()

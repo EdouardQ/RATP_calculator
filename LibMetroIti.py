@@ -2,71 +2,30 @@
 
 ############ Import ############
 
+import os
 from LibMetroCsv import *
 
 ############ Fonctions ############
 
-def itineraire(station_depart,ligne_depart,station_arrive,ligne_arrive,heure):
+def itineraire(station_depart,ligne_depart,station_arrive,ligne_arrive):
     """ Str or Int -> Str
     Transforme le code recu de la fonction
     calcul_itineraire en un str lisible et compréhensible par tous."""
     
     code=calcul_itineraire(station_depart,ligne_depart,station_arrive,ligne_arrive)
-    time=temps_itineraire(station_depart,ligne_depart,station_arrive,ligne_arrive,heure,code)
     if code=="Vous êtes déjà arrivé.":
         return code
-    elif type(code)==int:
-        return ("Entre "+station_depart+" à "+station_arrive+", il y a "+str(code)+" stations.\nTemps moyen du trajet : "+str(int(time))+"mins.") 
+    elif type(code)==type(0):
+        return ("Entre "+station_depart+" à "+station_arrive+", il y a "+str(code)+" stations.") 
     else:
         l=code.split(".")
         if l[4]=="":
-            return ("Pour aller de"+station_depart+" ligne "+ligne_depart+" à "+station_arrive+" ligne "+ligne_arrive+" en "+str(l[0])+" stations, \nil vous faut changer à "+str(l[1])+".\nTemps moyen du trajet : "+str(int(time))+ "mins.")
+            return ("Pour aller de "+station_depart+" ligne "+ligne_depart+" à "+station_arrive+" ligne "+ligne_arrive+" en "+str(l[0])+" stations, \nil vous faut changer à "+str(l[1])+".")
         elif str(l[1])==station_depart:
-            return ("Pour aller de "+station_depart+" ligne "+ligne_depart+" à "+station_arrive+" ligne "+ligne_arrive+" en "+str(l[0])+" stations, \nil vous faut changer à "+str(l[3])+".\nTemps moyen du trajet : "+str(int(time))+ "mins.")
+            return ("Pour aller de "+station_depart+" ligne "+ligne_depart+" à "+station_arrive+" ligne "+ligne_arrive+" en "+str(l[0])+" stations, \nil vous faut changer à "+str(l[3])+".")
         else:
-            return ("Pour aller de "+station_depart+" ligne "+ligne_depart+" à "+station_arrive+" ligne "+ligne_arrive+" en "+str(l[0])+" stations, \nil vous faut changer à "+str(l[1])+" pour prendre la ligne "+str(l[4])+" puis changer à "+str(l[3])+".\nTemps moyen du trajet : "+str(int(time))+ "mins.")
-        
-def temps_itineraire(station_depart,ligne_depart,station_arrive,ligne_arrive,heure,code):
-    """Str or Int -> Float or Int
-    Transforme le code reçu de la fonction et retourne le temps de parcourt pour l'itinéraire rentré."""
-    dict_time=dict_temps_csv("info_temps.csv")
-    if heure>=0 and heure<=2:
-        heure+=24
-    if code=="Vous êtes déjà arrivé.":
-        return 0
-    elif type(code)==int:
-        if (heure>=6 and heure<=10) or (heure>=16 and heure<=22): #heures de pointe
-            return code*(float(dict_time[ligne_depart][0])+float(dict_time[ligne_depart][1]))+float(dict_time[ligne_depart][2])
-        elif (heure>10 and heure<16) or (heure>22 and heure<26): #heures creuses / 26 correspond à 2h du matin
-            return code*(float(dict_time[ligne_depart][0])+float(dict_time[ligne_depart][1]))+float(dict_time[ligne_depart][3])
-    else :
-        l=code.split(".")
-        if l[4]=="":
-            if (heure>=6 and heure<=10) or (heure>=16 and heure<=22): #heures de pointe
-                time1=float(l[1])*(float(dict_time[ligne_depart][0])+float(dict_time[ligne_depart][1]))+float(dict_time[ligne_depart][2])
-                time2=float(l[4])*(float(dict_time[ligne_arrive][0])+float(dict_time[ligne_arrive][1]))+float(dict_time[ligne_arrive][2])
-                return time1+time2
-            elif (heure>10 and heure<16) or (heure>22 and heure<26): #heures creuses / 26 correspond à 2h du matin
-                time1=float(l[1])*(float(dict_time[ligne_depart][0])+float(dict_time[ligne_depart][1]))+float(dict_time[ligne_depart][3])
-                time2=float(l[4])*(float(dict_time[ligne_arrive][0])+float(dict_time[ligne_arrive][1]))+float(dict_time[ligne_arrive][3])
-                return time1+time2
-        else:
-            if (heure>=6 and heure<=10) or (heure>=16 and heure<=22): #heures de pointe
-                time1=float(l[1])*(float(dict_time[ligne_depart][0])+float(dict_time[ligne_depart][1]))+float(dict_time[ligne_depart][2])
-                time2=float(l[4])*(float(dict_time[l[6]][0])+float(dict_time[l[6]][1]))+float(dict_time[l[6]][2])
-                time3=float(l[7])*(float(dict_time[ligne_arrive][0])+float(dict_time[ligne_arrive][1]))+float(dict_time[ligne_arrive][2])
-                return time1+time2+time3
-            elif (heure>10 and heure<16) or (heure>22 and heure<26): #heures creuses / 26 correspond à 2h du matin
-                time1=float(l[1])*(float(dict_time[ligne_depart][0])+float(dict_time[ligne_depart][1]))+float(dict_time[ligne_depart][3])
-                time2=float(l[4])*(float(dict_time[l[6]][0])+float(dict_time[l[6]][1]))+float(dict_time[l[6]][3])
-                time3=float(l[7])*(float(dict_time[ligne_arrive][0])+float(dict_time[ligne_arrive][1]))+float(dict_time[ligne_arrive][3])
-                return time1+time2+time3
-
+            return ("Pour aller de "+station_depart+" ligne "+ligne_depart+" à "+station_arrive+" ligne "+ligne_arrive+" en "+str(l[0])+" stations, \nil vous faut changer à "+str(l[1])+" pour prendre la ligne "+str(l[4])+" puis changer à "+str(l[3])+".")
             
-            
-            
-        
-           
 def infos_station(station):
     """
     Fonction qui retourne sous str les informations (ligne et place) de la station donnée.
@@ -88,14 +47,9 @@ def calcul_itineraire(station_depart,ligne_depart,station_arrive,ligne_arrive):
     L=listeMetroCsv("liste stations.csv")
     L1corres=list()
     L2corres=list()
+    L3corres=list()
     trajet=100
     memtrajet=99
-    trajet1=0
-    trajet2=0
-    trajet3=0
-    memtrajet1=0
-    memtrajet2=0
-    memtrajet3=0
     corres=""
     corres2=""
     lignecorres=""
@@ -106,6 +60,7 @@ def calcul_itineraire(station_depart,ligne_depart,station_arrive,ligne_arrive):
     elif ligne_depart == ligne_arrive:
         return calcul_distance(station_depart,ligne_depart,station_arrive,ligne_arrive)
     elif ligne_depart != ligne_arrive:
+        """Répartition des correspondances dans les listes"""
         for var in L:
           if var[0]==ligne_depart:
               if ligne_arrive in correspondance(var[1],var[0]):
@@ -119,38 +74,29 @@ def calcul_itineraire(station_depart,ligne_depart,station_arrive,ligne_arrive):
         if station_depart in L1corres:
             return calcul_distance(station_depart,ligne_arrive,station_arrive,ligne_arrive)
         else:
+            """Code pour une correspondance"""
             for var in L1corres:
                 if var[0] == ligne_depart:
-                    trajet1=calcul_distance(station_depart,ligne_depart,var[1],var[0])
-                    trajet2=calcul_distance(var[1],ligne_arrive,station_arrive,ligne_arrive)
-                    trajet=trajet1+trajet2
+                    trajet=calcul_distance(station_depart,ligne_depart,var[1],var[0])+calcul_distance(var[1],ligne_arrive,station_arrive,ligne_arrive)
                 if trajet < memtrajet:
                     memtrajet=trajet
                     corres=var[1]
                     lignecorres=var[0]
-                    memtrajet1=trajet1
-                    memtrajet2=trajet2
-        
+        """Code pour deux correspondances"""
         for var2 in L2corres:
             for var in L:
                 if var[0]==ligne_depart:
                     if var2[0] in correspondance(var[1],var[0]):
-                        trajet1=calcul_distance(station_depart,ligne_depart,var[1],var[0])
-                        trajet2=calcul_distance(var[1],var2[0],var2[1],var2[0])
-                        trajet3=calcul_distance(var2[1],ligne_arrive,station_arrive,ligne_arrive)
-                        trajet=trajet1+trajet2+trajet3                        
+                        trajet=calcul_distance(station_depart,ligne_depart,var[1],var[0])+calcul_distance(var[1],var2[0],var2[1],var2[0])+calcul_distance(var2[1],ligne_arrive,station_arrive,ligne_arrive)
                     if trajet < memtrajet:
-                        memtrajet=trajet
+                        memtrajet=trajet #nb de stations à faire*
                         corres=var[1]
                         lignecorres=var[0]
                         corres2=var2[1]
                         lignecorres2=var2[0]
-                        memtrajet1=trajet1
-                        memtrajet2=trajet2
-                        memtrajet3=trajet3
 
 
-    return (str(memtrajet)+"."+str(memtrajet1)+"."+corres+"."+lignecorres+"."+str(memtrajet2)+"."+corres2+"."+lignecorres2+"."+str(memtrajet3))
+    return (str(memtrajet)+"."+corres+"."+lignecorres+"."+corres2+"."+lignecorres2)
 
 def calcul_distance(station_depart,ligne_depart,station_arrive,ligne_arrive):
     """
@@ -367,13 +313,11 @@ def correspondance(station,ligne):
                 Lcorres.append(var[0])
     return Lcorres
 
-############ Testes des fonctions  ############
-
 #print(infos_station("MONTPARNASSE"))
 #print(calcul_distance("VOLONTAIRE","M12","MONTPARNASSE","M12"))
 #print(correspondance("MONTPARNASSE","M12"))
 #print(itineraire("GARE DE L'EST","M7","GARE DE L'EST","M7"))
-#print(itineraire("GARE DE L'EST","M7","IVRY-SUR-SEINE","M7",8))
-#print(calcul_itineraire("GARE DE L'EST","M5","JUSSIEU","M10"))
-#print(calcul_itineraire("GARE DE L'EST","M7","JUSSIEU","M10"))
-#print(calcul_itineraire("PORTE DE VANVES","M13","DANUBE","M7b"))
+#print(itineraire("GARE DE L'EST","M7","IVRY-SUR-SEINE","M7"))
+#print(itineraire("GARE DE L'EST","M5","JUSSIEU","M10"))
+#print(itineraire("GARE DE L'EST","M7","JUSSIEU","M10"))
+#print(itineraire("PORTE DE VANVES","M13","DANUBE","M7b"))
